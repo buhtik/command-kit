@@ -1,0 +1,431 @@
+{
+  "title": "macOS Performance Troubleshooting Commands",
+  "platform": "macOS",
+  "categories": [
+    {
+      "name": "CPU and Processes",
+      "commands": [
+        {
+          "command": "top -o cpu",
+          "purpose": "Interactive process view sorted by CPU usage",
+          "sudo": false
+        },
+        {
+          "command": "ps -Ao pid,ppid,%cpu,%mem,etime,command | sort -k3 -nr | head -20",
+          "purpose": "Show top CPU-consuming processes with PID, parent PID, memory, and elapsed time",
+          "sudo": false
+        },
+        {
+          "command": "pgrep -fl PROCESS_NAME",
+          "purpose": "Find processes by name",
+          "sudo": false
+        },
+        {
+          "command": "ps -p PID -o pid,ppid,%cpu,%mem,etime,command",
+          "purpose": "Inspect a specific process",
+          "sudo": false
+        },
+        {
+          "command": "top -pid PID",
+          "purpose": "Monitor a single process in top",
+          "sudo": false
+        },
+        {
+          "command": "sample PID 10",
+          "purpose": "Capture a 10-second stack sample of a high-CPU or stuck process",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "sudo spindump PID",
+          "purpose": "Collect detailed diagnostic information for a spinning or unresponsive process",
+          "sudo": true
+        }
+      ]
+    },
+    {
+      "name": "Memory",
+      "commands": [
+        {
+          "command": "vm_stat",
+          "purpose": "Show virtual memory statistics",
+          "sudo": false
+        },
+        {
+          "command": "memory_pressure",
+          "purpose": "Show current memory pressure and memory health",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "memory_pressure -Q",
+          "purpose": "Show a compact memory pressure summary",
+          "sudo": false
+        },
+        {
+          "command": "ps -Ao pid,%mem,rss,command | sort -k2 -nr | head -20",
+          "purpose": "Show processes using the most memory",
+          "sudo": false
+        },
+        {
+          "command": "sysctl -n hw.memsize | awk '{printf \"%.1f GB\\n\", $1/1024/1024/1024}'",
+          "purpose": "Show total physical RAM in GB",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "Disk Space",
+      "commands": [
+        {
+          "command": "df -h",
+          "purpose": "Show filesystem disk usage",
+          "sudo": false
+        },
+        {
+          "command": "df -h /",
+          "purpose": "Show usage of the system filesystem",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "du -sh ~/* 2>/dev/null | sort -h",
+          "purpose": "Find large directories in the home directory",
+          "sudo": false
+        },
+        {
+          "command": "du -sh ~/Library/* 2>/dev/null | sort -h",
+          "purpose": "Find large directories inside the user Library",
+          "sudo": false
+        },
+        {
+          "command": "sudo du -xhd 1 /System/Volumes/Data 2>/dev/null | sort -h",
+          "purpose": "Find large directories on the APFS Data volume",
+          "sudo": true
+        }
+      ]
+    },
+    {
+      "name": "Disk and Filesystem I/O",
+      "commands": [
+        {
+          "command": "iostat -w 1",
+          "purpose": "Monitor CPU and disk I/O every second",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "iostat -d -w 1",
+          "purpose": "Monitor disk I/O every second",
+          "sudo": false
+        },
+        {
+          "command": "sudo fs_usage",
+          "purpose": "Show live filesystem and system-call activity",
+          "sudo": true
+        },
+        {
+          "command": "sudo fs_usage -w PROCESS_NAME",
+          "purpose": "Show filesystem activity for a specific process",
+          "sudo": true
+        }
+      ]
+    },
+    {
+      "name": "Open Files and Process Resources",
+      "commands": [
+        {
+          "command": "lsof -p PID",
+          "purpose": "Show files, sockets, libraries, and other resources opened by a process",
+          "sudo": false
+        },
+        {
+          "command": "lsof -p PID | wc -l",
+          "purpose": "Count open resources for a specific process",
+          "sudo": false
+        },
+        {
+          "command": "lsof -i -n -P",
+          "purpose": "Show processes with open network connections",
+          "sudo": false
+        },
+        {
+          "command": "ulimit -a",
+          "purpose": "Show shell resource limits",
+          "sudo": false
+        },
+        {
+          "command": "sysctl kern.maxfiles kern.maxfilesperproc",
+          "purpose": "Show macOS kernel file descriptor limits",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "Logs",
+      "commands": [
+        {
+          "command": "log show --last 10m --style compact",
+          "purpose": "Show system logs from the last 10 minutes",
+          "sudo": false
+        },
+        {
+          "command": "log show --last 10m --style compact --predicate 'process == \"PROCESS_NAME\"'",
+          "purpose": "Show recent logs for a specific process",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "log show --last 30m --style compact --predicate 'messageType == error'",
+          "purpose": "Show recent error-level log messages",
+          "sudo": false
+        },
+        {
+          "command": "log show --last 30m --style compact | grep -Ei 'error|fail|timeout'",
+          "purpose": "Search recent logs for common failure keywords",
+          "sudo": false
+        },
+        {
+          "command": "log stream --style compact",
+          "purpose": "Stream system logs in real time",
+          "sudo": false
+        },
+        {
+          "command": "log stream --style compact --predicate 'process == \"PROCESS_NAME\"'",
+          "purpose": "Stream logs for a specific process",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "Power and Thermal",
+      "commands": [
+        {
+          "command": "pmset -g",
+          "purpose": "Show current power-management configuration",
+          "sudo": false
+        },
+        {
+          "command": "pmset -g batt",
+          "purpose": "Show battery state and power source",
+          "sudo": false
+        },
+        {
+          "command": "pmset -g assertions",
+          "purpose": "Show processes and assertions preventing sleep or affecting power behavior",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "pmset -g assertionslog",
+          "purpose": "Monitor power assertions continuously",
+          "sudo": false
+        },
+        {
+          "command": "pmset -g therm",
+          "purpose": "Show thermal warning information",
+          "sudo": false
+        },
+        {
+          "command": "sudo powermetrics -i 1000 -n 10",
+          "purpose": "Collect CPU, power, frequency, and thermal metrics for 10 seconds",
+          "sudo": true,
+          "importance": "high"
+        }
+      ]
+    },
+    {
+      "name": "Network",
+      "commands": [
+        {
+          "command": "nettop",
+          "purpose": "Interactive per-process network usage",
+          "sudo": false
+        },
+        {
+          "command": "nettop -m tcp",
+          "purpose": "Show TCP network activity by process",
+          "sudo": false
+        },
+        {
+          "command": "netstat -rn",
+          "purpose": "Show the routing table",
+          "sudo": false
+        },
+        {
+          "command": "route -n get default",
+          "purpose": "Show the current default network route",
+          "sudo": false
+        },
+        {
+          "command": "ifconfig",
+          "purpose": "Show network interfaces and addresses",
+          "sudo": false
+        },
+        {
+          "command": "scutil --dns",
+          "purpose": "Show current DNS configuration",
+          "sudo": false
+        },
+        {
+          "command": "networkQuality",
+          "purpose": "Run Apple's built-in network quality test",
+          "sudo": false
+        },
+        {
+          "command": "ping 8.8.8.8",
+          "purpose": "Test basic IP connectivity",
+          "sudo": false
+        },
+        {
+          "command": "traceroute 8.8.8.8",
+          "purpose": "Inspect the network path to a destination",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "Launch Services and Daemons",
+      "commands": [
+        {
+          "command": "launchctl print system",
+          "purpose": "Inspect system LaunchDaemons",
+          "sudo": false
+        },
+        {
+          "command": "launchctl print gui/$(id -u)",
+          "purpose": "Inspect services running in the current user's GUI session",
+          "sudo": false
+        },
+        {
+          "command": "launchctl print gui/$(id -u) | grep -i SERVICE_NAME",
+          "purpose": "Search current-user launch services",
+          "sudo": false
+        },
+        {
+          "command": "killall PROCESS_NAME",
+          "purpose": "Terminate all processes with an exact process name",
+          "sudo": false,
+          "warning": "Verify the process name before running"
+        },
+        {
+          "command": "sudo killall PROCESS_NAME",
+          "purpose": "Terminate system-owned processes with an exact process name",
+          "sudo": true,
+          "warning": "Use only when you understand the service being restarted"
+        }
+      ]
+    },
+    {
+      "name": "Threads",
+      "commands": [
+        {
+          "command": "ps -M PID",
+          "purpose": "Show threads belonging to a process",
+          "sudo": false
+        },
+        {
+          "command": "ps -p PID -o thcount",
+          "purpose": "Show thread count for a process",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "System Load and Uptime",
+      "commands": [
+        {
+          "command": "uptime",
+          "purpose": "Show uptime and load averages",
+          "sudo": false,
+          "importance": "high"
+        },
+        {
+          "command": "sysctl vm.loadavg",
+          "purpose": "Show kernel load averages",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "Spotlight",
+      "commands": [
+        {
+          "command": "mdutil -s /",
+          "purpose": "Show Spotlight indexing status for the root filesystem",
+          "sudo": false
+        },
+        {
+          "command": "ps aux | grep -E 'mds|mdworker'",
+          "purpose": "Show Spotlight-related processes",
+          "sudo": false
+        },
+        {
+          "command": "log stream --predicate 'process == \"mds\"'",
+          "purpose": "Stream Spotlight service logs",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "APFS and Storage",
+      "commands": [
+        {
+          "command": "diskutil list",
+          "purpose": "Show disks, partitions, and volumes",
+          "sudo": false
+        },
+        {
+          "command": "diskutil apfs list",
+          "purpose": "Show APFS containers and volumes",
+          "sudo": false
+        },
+        {
+          "command": "diskutil info /",
+          "purpose": "Show detailed information about the system volume",
+          "sudo": false
+        }
+      ]
+    },
+    {
+      "name": "System Information",
+      "commands": [
+        {
+          "command": "sw_vers",
+          "purpose": "Show macOS version and build",
+          "sudo": false
+        },
+        {
+          "command": "uname -a",
+          "purpose": "Show kernel and architecture information",
+          "sudo": false
+        },
+        {
+          "command": "system_profiler SPHardwareDataType",
+          "purpose": "Show Mac hardware details",
+          "sudo": false
+        },
+        {
+          "command": "system_profiler SPHardwareDataType | grep -E 'Chip|Memory|Cores'",
+          "purpose": "Show a compact hardware summary",
+          "sudo": false
+        }
+      ]
+    }
+  ],
+  "quick_checks": [
+    "uptime",
+    "ps -Ao pid,%cpu,%mem,etime,command | sort -k2 -nr | head -20",
+    "memory_pressure",
+    "df -h /",
+    "iostat -w 1",
+    "pmset -g assertions",
+    "sudo powermetrics -i 1000 -n 5"
+  ],
+  "high_cpu_process_workflow": [
+    "ps -Ao pid,ppid,%cpu,%mem,etime,command | sort -k3 -nr | head -20",
+    "sample PID 10",
+    "lsof -p PID",
+    "log show --last 10m --style compact --predicate 'process == \"PROCESS_NAME\"'"
+  ]
+}
