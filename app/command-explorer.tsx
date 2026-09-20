@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-
-type Command = {
-  command: string;
-  purpose: string;
-  category: string;
-  sudo: boolean;
-  importance?: string;
-  warning?: string;
-};
+import type { CommandCollection } from "./command-data";
 
 type Props = {
-  commands: Command[];
-  categories: string[];
-  quickChecks: string[];
-  highCpuWorkflow: string[];
+  collections: CommandCollection[];
+};
+
+const emptyCollection: CommandCollection = {
+  title: "Commands",
+  description: "Command library",
+  glyph: ">_",
+  categories: [],
+  commands: [],
+  workflows: [],
 };
 
 const categoryGlyphs: Record<string, string> = {
@@ -33,19 +31,43 @@ const categoryGlyphs: Record<string, string> = {
   Spotlight: "◎",
   "APFS and Storage": "▱",
   "System Information": "i",
+  "Connect and Navigate": "↪",
+  "Schemas and Tables": "▦",
+  "Query Workflow": "›_",
+  "Activity and Locks": "⌁",
+  "Size and Maintenance": "◫",
+  "Backup and Restore": "⇄",
+  "Roles and Databases": "◎",
+  "Context and Cluster": "⌘",
+  "Namespaces and Resources": "▱",
+  "Pods and Workloads": "⬡",
+  "Logs and Debugging": "≡",
+  "Apply and Rollouts": "↗",
+  Networking: "⌁",
+  "Configuration and Secrets": "⚙",
+  "Scale and Delete": "±",
+  "Start and Configure": "＋",
+  "Status and Changes": "◇",
+  "Commits and History": "●",
+  "Branches and Merging": "⑂",
+  "Remotes and Sync": "⇄",
+  "Stash and Worktrees": "▤",
+  "Undo and Recover": "↶",
+  "Tags and Releases": "◆",
 };
 
-export function CommandExplorer({
-  commands,
-  categories,
-  quickChecks,
-  highCpuWorkflow,
-}: Props) {
+export function CommandExplorer({ collections }: Props) {
+  const [collectionTitle, setCollectionTitle] = useState(collections[0]?.title ?? "");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All commands");
   const [copied, setCopied] = useState<string | null>(null);
   const [showWorkflow, setShowWorkflow] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const collection =
+    collections.find((item) => item.title === collectionTitle) ??
+    collections[0] ??
+    emptyCollection;
+  const { commands, categories } = collection;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -85,6 +107,12 @@ export function CommandExplorer({
     searchRef.current?.focus();
   };
 
+  const selectCollection = (title: string) => {
+    setCollectionTitle(title);
+    setCategory("All commands");
+    setShowWorkflow(false);
+  };
+
   return (
     <main>
       <header className="topbar">
@@ -118,9 +146,25 @@ export function CommandExplorer({
       <div className="app-shell">
         <aside className="sidebar" aria-label="Command categories">
           <div className="sidebar-heading">
-            <span>macOS</span>
-            <small>Performance & diagnostics</small>
+            <span>Collections</span>
+            <small>{collections.reduce((total, item) => total + item.commands.length, 0)} commands across {collections.length} toolkits</small>
           </div>
+
+          <nav className="collection-nav" aria-label="Command collections">
+            {collections.map((item) => (
+              <button
+                className={collection.title === item.title ? "active" : ""}
+                key={item.title}
+                onClick={() => selectCollection(item.title)}
+              >
+                <span>{item.glyph}</span>
+                <span><b>{item.title}</b><small>{item.description}</small></span>
+                <i>{item.commands.length}</i>
+              </button>
+            ))}
+          </nav>
+
+          <div className="category-heading">{collection.title} categories</div>
 
           <nav className="category-nav">
             <button
@@ -144,17 +188,19 @@ export function CommandExplorer({
             ))}
           </nav>
 
-          <button className="workflow-trigger" onClick={() => setShowWorkflow(!showWorkflow)}>
-            <span><b>Quick diagnostics</b><small>Two guided checklists</small></span>
-            <i>{showWorkflow ? "−" : "+"}</i>
-          </button>
+          {collection.workflows.length > 0 && (
+            <button className="workflow-trigger" onClick={() => setShowWorkflow(!showWorkflow)}>
+              <span><b>Quick diagnostics</b><small>{collection.workflows.length} guided checklists</small></span>
+              <i>{showWorkflow ? "−" : "+"}</i>
+            </button>
+          )}
         </aside>
 
         <section className="workspace" id="commands" aria-labelledby="results-title">
           <div className="results-bar">
             <div>
               <p className="context-label">
-                {query ? "SEARCH RESULTS" : category === "All commands" ? "COMMAND LIBRARY" : "CATEGORY"}
+                {query ? `${collection.title.toUpperCase()} SEARCH` : category === "All commands" ? collection.description.toUpperCase() : `${collection.title.toUpperCase()} CATEGORY`}
               </p>
               <h1 id="results-title">
                 {query ? <>Results for <em>“{query}”</em></> : category}
@@ -163,10 +209,24 @@ export function CommandExplorer({
             <div className="results-actions">
               <span>{filtered.length} of {commands.length}</span>
               {(query || category !== "All commands") && <button onClick={reset}>Reset</button>}
-              <button className={showWorkflow ? "active" : ""} onClick={() => setShowWorkflow(!showWorkflow)}>
-                {showWorkflow ? "Hide checks" : "Quick checks"}
-              </button>
+              {collection.workflows.length > 0 && (
+                <button className={showWorkflow ? "active" : ""} onClick={() => setShowWorkflow(!showWorkflow)}>
+                  {showWorkflow ? "Hide checks" : "Quick checks"}
+                </button>
+              )}
             </div>
+          </div>
+
+          <div className="mobile-collections" aria-label="Command collections">
+            {collections.map((item) => (
+              <button
+                key={item.title}
+                className={collection.title === item.title ? "active" : ""}
+                onClick={() => selectCollection(item.title)}
+              >
+                <span>{item.glyph}</span>{item.title}<b>{item.commands.length}</b>
+              </button>
+            ))}
           </div>
 
           <div className="mobile-filters" aria-label="Category filters">
@@ -183,8 +243,9 @@ export function CommandExplorer({
 
           {showWorkflow && (
             <div className="workflow-panel">
-              <WorkflowList title="Mac feels slow" commands={quickChecks} copied={copied} onCopy={copy} />
-              <WorkflowList title="High CPU process" commands={highCpuWorkflow} copied={copied} onCopy={copy} />
+              {collection.workflows.map((workflow) => (
+                <WorkflowList key={workflow.title} title={workflow.title} commands={workflow.commands} copied={copied} onCopy={copy} />
+              ))}
             </div>
           )}
 

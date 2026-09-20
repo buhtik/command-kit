@@ -54,9 +54,19 @@ main { min-height: 100vh; }
 
 .app-shell { max-width: 1540px; margin: 0 auto; display: grid; grid-template-columns: 238px minmax(0, 1fr); align-items: start; }
 .sidebar { position: sticky; top: 64px; height: calc(100vh - 64px); border-right: 1px solid var(--line); padding: 25px 14px 20px; overflow-y: auto; scrollbar-width: thin; }
-.sidebar-heading { padding: 0 10px 18px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+.sidebar-heading { padding: 0 10px 16px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
 .sidebar-heading span { display: block; color: var(--green); font: 700 10px var(--font-geist-mono), monospace; text-transform: uppercase; letter-spacing: .14em; }
 .sidebar-heading small { display: block; color: #777a70; font-size: 11px; margin-top: 6px; }
+.collection-nav { display: flex; flex-direction: column; gap: 3px; }
+.collection-nav button { width: 100%; min-height: 48px; padding: 7px 9px; display: grid; grid-template-columns: 27px minmax(0, 1fr) 24px; gap: 7px; align-items: center; border: 1px solid transparent; background: transparent; color: #8f9288; text-align: left; cursor: pointer; }
+.collection-nav button:hover { color: var(--ink); background: var(--panel); }
+.collection-nav button.active { color: var(--ink); border-color: #41453a; background: var(--panel-2); }
+.collection-nav button > span:first-child { display: grid; place-items: center; width: 25px; height: 25px; color: #10120e; background: #777b6e; font: 800 8px var(--font-geist-mono), monospace; }
+.collection-nav button.active > span:first-child { background: var(--green); }
+.collection-nav b { display: block; font-size: 11px; }
+.collection-nav small { display: block; margin-top: 3px; color: #686b62; font-size: 8px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.collection-nav i { color: #66695f; font: normal 8px var(--font-geist-mono), monospace; text-align: right; }
+.category-heading { margin: 18px 9px 7px; color: #66695f; font: 8px var(--font-geist-mono), monospace; letter-spacing: .1em; text-transform: uppercase; }
 .category-nav { display: flex; flex-direction: column; gap: 2px; }
 .category-nav button { width: 100%; border: 0; background: transparent; color: #a0a299; display: grid; grid-template-columns: 25px minmax(0, 1fr) 24px; align-items: center; gap: 6px; min-height: 37px; padding: 6px 9px; text-align: left; cursor: pointer; font-size: 11px; line-height: 1.25; }
 .category-nav button:hover { background: var(--panel); color: var(--ink); }
@@ -79,7 +89,7 @@ main { min-height: 100vh; }
 .results-actions span { color: #777a70; font: 9px var(--font-geist-mono), monospace; margin-right: 3px; }
 .results-actions button { border: 1px solid var(--line); background: transparent; color: #a0a299; padding: 7px 10px; font: 9px var(--font-geist-mono), monospace; cursor: pointer; }
 .results-actions button:hover, .results-actions button.active { color: #11130f; background: var(--green); border-color: var(--green); }
-.mobile-filters { display: none; }
+.mobile-filters, .mobile-collections { display: none; }
 
 .workflow-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 16px; }
 .workflow-list { background: var(--panel); padding: 20px; min-width: 0; }
@@ -122,6 +132,12 @@ footer a:hover { color: var(--green); }
   .app-shell { display: block; }
   .sidebar { display: none; }
   .workspace { padding-top: 20px; }
+  .mobile-collections { display: flex; gap: 7px; overflow-x: auto; margin: 0 -20px 8px; padding: 0 20px 8px; scrollbar-width: thin; }
+  .mobile-collections button { flex: none; display: flex; align-items: center; gap: 7px; min-height: 36px; border: 1px solid var(--line); background: var(--panel); color: #94978d; padding: 5px 9px 5px 5px; font-size: 10px; cursor: pointer; }
+  .mobile-collections button > span { display: grid; place-items: center; width: 24px; height: 24px; background: #65695e; color: #10120e; font: 800 8px var(--font-geist-mono), monospace; }
+  .mobile-collections button b { color: #686b62; font: 8px var(--font-geist-mono), monospace; }
+  .mobile-collections button.active { border-color: #59604b; color: var(--ink); }
+  .mobile-collections button.active > span { background: var(--green); }
   .mobile-filters { display: flex; gap: 7px; overflow-x: auto; margin: 0 -20px 14px; padding: 0 20px 10px; scrollbar-width: thin; }
   .mobile-filters button { flex: none; border: 1px solid var(--line); border-radius: 100px; background: transparent; color: #8d9086; padding: 7px 11px; font: 9px var(--font-geist-mono), monospace; }
   .mobile-filters button.active { color: #10120e; background: var(--green); border-color: var(--green); }
@@ -133,6 +149,7 @@ footer a:hover { color: var(--green); }
   .prompt-mark { width: 28px; height: 24px; }
   .search-shell { height: 42px; }
   .workspace { padding: 16px 15px 45px; }
+  .mobile-collections,
   .mobile-filters { margin-left: -15px; margin-right: -15px; padding-left: 15px; padding-right: 15px; }
   .results-bar { align-items: flex-end; padding-bottom: 14px; margin-bottom: 12px; }
   .results-bar h1 { font-size: 22px; }

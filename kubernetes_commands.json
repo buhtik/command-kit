@@ -1,0 +1,83 @@
+{
+  "title": "Kubernetes",
+  "description": "Clusters, workloads, debugging & delivery",
+  "glyph": "K8",
+  "categories": [
+    {
+      "name": "Context and Cluster",
+      "commands": [
+        { "command": "kubectl config get-contexts", "purpose": "List configured cluster contexts", "sudo": false },
+        { "command": "kubectl config current-context", "purpose": "Show the active cluster context", "sudo": false, "importance": "high" },
+        { "command": "kubectl config use-context CONTEXT", "purpose": "Switch to another cluster context", "sudo": false, "warning": "Confirm the target cluster before making changes." },
+        { "command": "kubectl cluster-info", "purpose": "Show control-plane and cluster service endpoints", "sudo": false },
+        { "command": "kubectl get nodes -o wide", "purpose": "List cluster nodes with status and network details", "sudo": false }
+      ]
+    },
+    {
+      "name": "Namespaces and Resources",
+      "commands": [
+        { "command": "kubectl get namespaces", "purpose": "List namespaces", "sudo": false },
+        { "command": "kubectl config set-context --current --namespace=NAMESPACE", "purpose": "Set the default namespace for the current context", "sudo": false },
+        { "command": "kubectl get all -n NAMESPACE", "purpose": "List common workload resources in a namespace", "sudo": false },
+        { "command": "kubectl api-resources", "purpose": "List resource types supported by the cluster", "sudo": false }
+      ]
+    },
+    {
+      "name": "Pods and Workloads",
+      "commands": [
+        { "command": "kubectl get pods -n NAMESPACE -o wide", "purpose": "List pods with node and IP details", "sudo": false, "importance": "high" },
+        { "command": "kubectl get deployments,statefulsets,daemonsets -n NAMESPACE", "purpose": "List the main workload controllers", "sudo": false },
+        { "command": "kubectl describe pod POD -n NAMESPACE", "purpose": "Show pod state, events, probes, and scheduling details", "sudo": false, "importance": "high" },
+        { "command": "kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded", "purpose": "Find unhealthy or pending pods across all namespaces", "sudo": false },
+        { "command": "kubectl top pods -n NAMESPACE", "purpose": "Show pod CPU and memory usage", "sudo": false }
+      ]
+    },
+    {
+      "name": "Logs and Debugging",
+      "commands": [
+        { "command": "kubectl logs -f POD -n NAMESPACE", "purpose": "Stream logs from a pod", "sudo": false, "importance": "high" },
+        { "command": "kubectl logs POD -c CONTAINER -n NAMESPACE --previous", "purpose": "Show logs from a previously crashed container", "sudo": false },
+        { "command": "kubectl exec -it POD -n NAMESPACE -- /bin/sh", "purpose": "Open a shell inside a running pod", "sudo": false },
+        { "command": "kubectl debug -it POD -n NAMESPACE --image=busybox --target=CONTAINER", "purpose": "Attach an ephemeral debug container to a pod", "sudo": false },
+        { "command": "kubectl get events -n NAMESPACE --sort-by=.lastTimestamp", "purpose": "Show namespace events in chronological order", "sudo": false }
+      ]
+    },
+    {
+      "name": "Apply and Rollouts",
+      "commands": [
+        { "command": "kubectl diff -f MANIFEST.yaml", "purpose": "Preview changes a manifest would make", "sudo": false, "importance": "high" },
+        { "command": "kubectl apply -f MANIFEST.yaml", "purpose": "Create or update resources from a manifest", "sudo": false, "importance": "high" },
+        { "command": "kubectl rollout status deployment/NAME -n NAMESPACE", "purpose": "Watch a deployment rollout until it completes", "sudo": false },
+        { "command": "kubectl rollout history deployment/NAME -n NAMESPACE", "purpose": "Show deployment rollout revisions", "sudo": false },
+        { "command": "kubectl rollout undo deployment/NAME -n NAMESPACE", "purpose": "Roll a deployment back to its previous revision", "sudo": false, "warning": "Changes live workloads; verify the namespace and deployment first." },
+        { "command": "kubectl set image deployment/NAME CONTAINER=IMAGE:TAG -n NAMESPACE", "purpose": "Update a deployment container image", "sudo": false }
+      ]
+    },
+    {
+      "name": "Networking",
+      "commands": [
+        { "command": "kubectl get services,ingresses -n NAMESPACE", "purpose": "List service and ingress endpoints", "sudo": false },
+        { "command": "kubectl get endpointslices -n NAMESPACE", "purpose": "Inspect the backend endpoints selected by services", "sudo": false },
+        { "command": "kubectl port-forward service/SERVICE 8080:80 -n NAMESPACE", "purpose": "Forward a local port to a service", "sudo": false },
+        { "command": "kubectl run curl --rm -it --restart=Never --image=curlimages/curl -- URL", "purpose": "Run a temporary curl pod for in-cluster network testing", "sudo": false }
+      ]
+    },
+    {
+      "name": "Configuration and Secrets",
+      "commands": [
+        { "command": "kubectl get configmap NAME -n NAMESPACE -o yaml", "purpose": "Inspect a ConfigMap as YAML", "sudo": false },
+        { "command": "kubectl get secret NAME -n NAMESPACE -o jsonpath='{.data.KEY}' | base64 --decode", "purpose": "Decode one value from a Secret", "sudo": false, "warning": "Secret data will be printed to the terminal." },
+        { "command": "kubectl create secret generic NAME --from-literal=KEY=VALUE -n NAMESPACE", "purpose": "Create a generic Secret from a literal value", "sudo": false, "warning": "Literal values may be retained in shell history." },
+        { "command": "kubectl explain deployment.spec.template.spec.containers", "purpose": "Read built-in schema help for a resource field", "sudo": false }
+      ]
+    },
+    {
+      "name": "Scale and Delete",
+      "commands": [
+        { "command": "kubectl scale deployment/NAME --replicas=3 -n NAMESPACE", "purpose": "Set the replica count for a deployment", "sudo": false },
+        { "command": "kubectl delete -f MANIFEST.yaml", "purpose": "Delete resources defined by a manifest", "sudo": false, "warning": "Deletes live cluster resources; verify your context and namespace." },
+        { "command": "kubectl delete pod POD -n NAMESPACE", "purpose": "Delete a pod so its controller can recreate it", "sudo": false, "warning": "A standalone pod will not be recreated automatically." }
+      ]
+    }
+  ]
+}
