@@ -29,3 +29,11 @@ Create a production build with:
 ```bash
 npm run build
 ```
+
+Create the static GitHub Pages build with:
+
+```bash
+npm run build:pages
+```
+
+The public site is deployed from `main` by GitHub Actions.
