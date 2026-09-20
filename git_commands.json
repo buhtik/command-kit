@@ -1,0 +1,85 @@
+{
+  "title": "Git",
+  "description": "Branches, commits, collaboration & recovery",
+  "glyph": "GT",
+  "categories": [
+    {
+      "name": "Start and Configure",
+      "commands": [
+        { "command": "git init", "purpose": "Initialize a Git repository in the current directory", "sudo": false },
+        { "command": "git clone REPOSITORY_URL", "purpose": "Clone a remote repository", "sudo": false, "importance": "high" },
+        { "command": "git config --global user.name \"YOUR NAME\"", "purpose": "Set the author name used for commits", "sudo": false },
+        { "command": "git config --global user.email \"YOU@EXAMPLE.COM\"", "purpose": "Set the author email used for commits", "sudo": false },
+        { "command": "git config --list --show-origin", "purpose": "Show effective configuration and where each value comes from", "sudo": false }
+      ]
+    },
+    {
+      "name": "Status and Changes",
+      "commands": [
+        { "command": "git status --short --branch", "purpose": "Show branch and working-tree status in a compact form", "sudo": false, "importance": "high" },
+        { "command": "git diff", "purpose": "Show unstaged changes", "sudo": false, "importance": "high" },
+        { "command": "git diff --staged", "purpose": "Show changes staged for the next commit", "sudo": false },
+        { "command": "git add PATH", "purpose": "Stage a file or directory for commit", "sudo": false },
+        { "command": "git add -p", "purpose": "Interactively stage selected parts of changed files", "sudo": false }
+      ]
+    },
+    {
+      "name": "Commits and History",
+      "commands": [
+        { "command": "git commit -m \"MESSAGE\"", "purpose": "Commit staged changes with a message", "sudo": false, "importance": "high" },
+        { "command": "git log --oneline --graph --decorate --all", "purpose": "View a compact graph of branches and commits", "sudo": false, "importance": "high" },
+        { "command": "git show COMMIT", "purpose": "Show a commit and its patch", "sudo": false },
+        { "command": "git blame PATH", "purpose": "Show the last commit and author for each line of a file", "sudo": false },
+        { "command": "git commit --amend", "purpose": "Replace the most recent commit with staged changes", "sudo": false, "warning": "Rewrites commit history; avoid amending a shared commit." }
+      ]
+    },
+    {
+      "name": "Branches and Merging",
+      "commands": [
+        { "command": "git branch --all", "purpose": "List local and remote-tracking branches", "sudo": false },
+        { "command": "git switch -c BRANCH", "purpose": "Create and switch to a new branch", "sudo": false, "importance": "high" },
+        { "command": "git switch BRANCH", "purpose": "Switch to an existing branch", "sudo": false },
+        { "command": "git merge BRANCH", "purpose": "Merge another branch into the current branch", "sudo": false },
+        { "command": "git branch -d BRANCH", "purpose": "Delete a fully merged local branch", "sudo": false }
+      ]
+    },
+    {
+      "name": "Remotes and Sync",
+      "commands": [
+        { "command": "git remote -v", "purpose": "List remotes and their fetch and push URLs", "sudo": false },
+        { "command": "git fetch --all --prune", "purpose": "Fetch all remotes and remove stale remote-tracking branches", "sudo": false },
+        { "command": "git pull --rebase", "purpose": "Fetch and replay local commits on the updated upstream branch", "sudo": false },
+        { "command": "git push -u origin BRANCH", "purpose": "Push a branch and set its upstream", "sudo": false, "importance": "high" },
+        { "command": "git push --force-with-lease", "purpose": "Safely force-push while protecting unseen remote work", "sudo": false, "warning": "Rewrites the remote branch; coordinate with collaborators first." }
+      ]
+    },
+    {
+      "name": "Stash and Worktrees",
+      "commands": [
+        { "command": "git stash push -u -m \"MESSAGE\"", "purpose": "Stash tracked and untracked changes with a label", "sudo": false },
+        { "command": "git stash list", "purpose": "List saved stashes", "sudo": false },
+        { "command": "git stash pop", "purpose": "Apply and remove the latest stash", "sudo": false },
+        { "command": "git worktree add ../PATH BRANCH", "purpose": "Check out another branch in a separate working directory", "sudo": false }
+      ]
+    },
+    {
+      "name": "Undo and Recover",
+      "commands": [
+        { "command": "git restore PATH", "purpose": "Discard unstaged changes to a file", "sudo": false, "warning": "Uncommitted changes to the file will be lost." },
+        { "command": "git restore --staged PATH", "purpose": "Unstage a path without discarding its changes", "sudo": false },
+        { "command": "git revert COMMIT", "purpose": "Create a new commit that reverses an earlier commit", "sudo": false, "importance": "high" },
+        { "command": "git reset --soft HEAD~1", "purpose": "Undo the latest commit while keeping its changes staged", "sudo": false },
+        { "command": "git reflog", "purpose": "Find recent branch-tip movements and recover lost commits", "sudo": false, "importance": "high" },
+        { "command": "git reset --hard COMMIT", "purpose": "Reset tracked files and the current branch to a commit", "sudo": false, "warning": "Destructive: discards tracked working-tree and staged changes." }
+      ]
+    },
+    {
+      "name": "Tags and Releases",
+      "commands": [
+        { "command": "git tag --list", "purpose": "List tags", "sudo": false },
+        { "command": "git tag -a v1.0.0 -m \"v1.0.0\"", "purpose": "Create an annotated release tag", "sudo": false },
+        { "command": "git push origin v1.0.0", "purpose": "Push one tag to the remote", "sudo": false }
+      ]
+    }
+  ]
+}

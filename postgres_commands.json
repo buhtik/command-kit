@@ -1,0 +1,74 @@
+{
+  "title": "PostgreSQL",
+  "description": "Databases, queries, performance & operations",
+  "glyph": "PG",
+  "categories": [
+    {
+      "name": "Connect and Navigate",
+      "commands": [
+        { "command": "psql -h HOST -p 5432 -U USER -d DATABASE", "purpose": "Connect to a PostgreSQL database", "sudo": false, "importance": "high" },
+        { "command": "\\l", "purpose": "List databases in psql", "sudo": false },
+        { "command": "\\c DATABASE", "purpose": "Connect to another database in psql", "sudo": false },
+        { "command": "\\conninfo", "purpose": "Show details for the current connection", "sudo": false },
+        { "command": "\\q", "purpose": "Quit psql", "sudo": false }
+      ]
+    },
+    {
+      "name": "Schemas and Tables",
+      "commands": [
+        { "command": "\\dn", "purpose": "List schemas", "sudo": false },
+        { "command": "\\dt", "purpose": "List tables in the current schema", "sudo": false, "importance": "high" },
+        { "command": "\\dt *.*", "purpose": "List tables across all schemas", "sudo": false },
+        { "command": "\\d TABLE_NAME", "purpose": "Describe a table, including columns and indexes", "sudo": false, "importance": "high" },
+        { "command": "\\di", "purpose": "List indexes", "sudo": false }
+      ]
+    },
+    {
+      "name": "Query Workflow",
+      "commands": [
+        { "command": "\\x auto", "purpose": "Automatically use expanded output for wide results", "sudo": false },
+        { "command": "\\timing on", "purpose": "Show execution time for each query", "sudo": false },
+        { "command": "\\i PATH/TO/FILE.sql", "purpose": "Run SQL commands from a file", "sudo": false },
+        { "command": "EXPLAIN (ANALYZE, BUFFERS) SELECT ...;", "purpose": "Run a query and inspect its execution plan and buffer usage", "sudo": false, "importance": "high", "warning": "ANALYZE executes the query; use care with data-changing statements." },
+        { "command": "SELECT version();", "purpose": "Show the PostgreSQL server version", "sudo": false }
+      ]
+    },
+    {
+      "name": "Activity and Locks",
+      "commands": [
+        { "command": "SELECT pid, usename, state, wait_event_type, wait_event, query FROM pg_stat_activity WHERE state <> 'idle';", "purpose": "Show active sessions and their current queries", "sudo": false, "importance": "high" },
+        { "command": "SELECT pg_cancel_backend(PID);", "purpose": "Cancel the current query for a backend", "sudo": false },
+        { "command": "SELECT pg_terminate_backend(PID);", "purpose": "Terminate a database session", "sudo": false, "warning": "Rolls back the session's open transaction and disconnects the client." },
+        { "command": "SELECT blocked.pid AS blocked_pid, blocker.pid AS blocker_pid, blocked.query AS blocked_query FROM pg_stat_activity blocked JOIN pg_locks blocked_locks ON blocked_locks.pid = blocked.pid AND NOT blocked_locks.granted JOIN pg_locks blocker_locks ON blocker_locks.locktype = blocked_locks.locktype AND blocker_locks.database IS NOT DISTINCT FROM blocked_locks.database AND blocker_locks.relation IS NOT DISTINCT FROM blocked_locks.relation AND blocker_locks.granted JOIN pg_stat_activity blocker ON blocker.pid = blocker_locks.pid;", "purpose": "Find sessions blocking other sessions", "sudo": false }
+      ]
+    },
+    {
+      "name": "Size and Maintenance",
+      "commands": [
+        { "command": "SELECT pg_size_pretty(pg_database_size(current_database()));", "purpose": "Show the size of the current database", "sudo": false },
+        { "command": "SELECT pg_size_pretty(pg_total_relation_size('TABLE_NAME'));", "purpose": "Show a table's total size including indexes", "sudo": false },
+        { "command": "VACUUM (ANALYZE) TABLE_NAME;", "purpose": "Reclaim reusable space and refresh planner statistics", "sudo": false, "importance": "high" },
+        { "command": "REINDEX TABLE TABLE_NAME;", "purpose": "Rebuild all indexes for a table", "sudo": false, "warning": "Can lock the table; consider REINDEX CONCURRENTLY in production." }
+      ]
+    },
+    {
+      "name": "Backup and Restore",
+      "commands": [
+        { "command": "pg_dump -h HOST -U USER -d DATABASE -Fc -f backup.dump", "purpose": "Create a compressed custom-format database backup", "sudo": false, "importance": "high" },
+        { "command": "pg_restore -h HOST -U USER -d DATABASE --clean --if-exists backup.dump", "purpose": "Restore a custom-format backup into a database", "sudo": false, "warning": "The --clean option drops objects before recreating them." },
+        { "command": "pg_dumpall -h HOST -U USER --globals-only > globals.sql", "purpose": "Back up cluster-wide roles and tablespaces", "sudo": false },
+        { "command": "psql -h HOST -U USER -d DATABASE -f backup.sql", "purpose": "Restore a plain-text SQL backup", "sudo": false }
+      ]
+    },
+    {
+      "name": "Roles and Databases",
+      "commands": [
+        { "command": "\\du", "purpose": "List database roles and their attributes", "sudo": false },
+        { "command": "CREATE DATABASE database_name;", "purpose": "Create a database", "sudo": false },
+        { "command": "CREATE ROLE role_name WITH LOGIN PASSWORD 'PASSWORD';", "purpose": "Create a login role", "sudo": false, "warning": "Avoid exposing plaintext passwords in shared terminal history." },
+        { "command": "GRANT CONNECT ON DATABASE database_name TO role_name;", "purpose": "Allow a role to connect to a database", "sudo": false },
+        { "command": "DROP DATABASE database_name;", "purpose": "Permanently delete a database", "sudo": false, "warning": "Destructive and irreversible unless you have a verified backup." }
+      ]
+    }
+  ]
+}
