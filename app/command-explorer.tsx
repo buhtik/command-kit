@@ -44,7 +44,7 @@ export function CommandExplorer({
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All commands");
   const [copied, setCopied] = useState<string | null>(null);
-  const [showWorkflow, setShowWorkflow] = useState(true);
+  const [showWorkflow, setShowWorkflow] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -79,183 +79,178 @@ export function CommandExplorer({
     window.setTimeout(() => setCopied(null), 1400);
   };
 
-  const applyCategory = (value: string) => {
-    setCategory(value);
-    document.getElementById("library")?.scrollIntoView({ behavior: "smooth" });
+  const reset = () => {
+    setQuery("");
+    setCategory("All commands");
+    searchRef.current?.focus();
   };
 
   return (
     <main>
       <header className="topbar">
-        <a className="brand" href="#top" aria-label="Command Kit home">
+        <a className="brand" href="#commands" aria-label="Command Kit home">
           <span className="prompt-mark" aria-hidden="true">$_</span>
           <span>command<span className="brand-accent">kit</span></span>
         </a>
-        <nav aria-label="Primary navigation">
-          <a href="#library">Library</a>
-          <a href="#workflow">Workflows</a>
-          <a href="#about">About</a>
-        </nav>
-        <div className="status-pill"><span /> {commands.length} commands</div>
-      </header>
 
-      <section className="hero" id="top">
-        <div className="eyebrow"><span>///</span> YOUR ENGINEERING COMMAND LIBRARY</div>
-        <h1>Find the command.<br /><em>Keep moving.</em></h1>
-        <p className="hero-copy">
-          The high-signal commands you reach for when systems get weird—collected,
-          explained, and ready to copy.
-        </p>
         <div className="search-shell">
           <span className="search-icon" aria-hidden="true">⌕</span>
           <input
             ref={searchRef}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Try “memory pressure”, “process logs”, or “disk usage”"
+            placeholder="Search commands, problems, or categories…"
             aria-label="Search commands"
           />
-          <kbd>/</kbd>
+          {query ? (
+            <button className="clear-search" onClick={() => setQuery("")} aria-label="Clear search">×</button>
+          ) : (
+            <kbd>/</kbd>
+          )}
         </div>
-        <div className="search-hints">
-          <span>Popular:</span>
-          {["high cpu", "memory", "network", "logs"].map((term) => (
-            <button key={term} onClick={() => setQuery(term)}>{term}</button>
-          ))}
-        </div>
-      </section>
 
-      <section className="category-section" aria-labelledby="category-title">
-        <div className="section-heading">
-          <div>
-            <span className="section-index">01</span>
-            <h2 id="category-title">Browse by category</h2>
+        <div className="header-status" aria-live="polite">
+          <strong>{filtered.length}</strong>
+          <span>{query || category !== "All commands" ? "matches" : "commands"}</span>
+        </div>
+      </header>
+
+      <div className="app-shell">
+        <aside className="sidebar" aria-label="Command categories">
+          <div className="sidebar-heading">
+            <span>macOS</span>
+            <small>Performance & diagnostics</small>
           </div>
-          <p>macOS · performance & diagnostics</p>
-        </div>
-        <div className="category-grid">
-          {categories.map((item) => {
-            const count = commands.filter((command) => command.category === item).length;
-            return (
-              <button
-                className={category === item ? "category-card active" : "category-card"}
-                key={item}
-                onClick={() => applyCategory(item)}
-              >
-                <span className="category-glyph" aria-hidden="true">{categoryGlyphs[item] ?? "›"}</span>
-                <span>
-                  <strong>{item}</strong>
-                  <small>{count} commands</small>
-                </span>
-                <b aria-hidden="true">↗</b>
-              </button>
-            );
-          })}
-        </div>
-      </section>
 
-      <section className="workflow" id="workflow" aria-labelledby="workflow-title">
-        <div className="workflow-intro">
-          <span className="section-index">02</span>
-          <p className="mini-label">QUICK WORKFLOW</p>
-          <h2 id="workflow-title">Mac feels slow?</h2>
-          <p>Start with these checks. They cover load, memory, storage, I/O, power, and thermals.</p>
-          <button className="text-button" onClick={() => setShowWorkflow(!showWorkflow)}>
-            {showWorkflow ? "Hide workflow" : "Show workflow"} <span>→</span>
-          </button>
-        </div>
-        {showWorkflow && (
-          <ol className="workflow-steps">
-            {quickChecks.map((item, index) => (
-              <li key={item}>
-                <span className="step-number">{String(index + 1).padStart(2, "0")}</span>
-                <code>{item}</code>
-                <button onClick={() => copy(item)} aria-label={`Copy ${item}`}>
-                  {copied === item ? "Copied" : "Copy"}
-                </button>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
-
-      <section className="library" id="library" aria-labelledby="library-title">
-        <div className="section-heading library-heading">
-          <div>
-            <span className="section-index">03</span>
-            <h2 id="library-title">Command library</h2>
-          </div>
-          <div className="result-controls">
-            <span>{filtered.length} results</span>
-            {category !== "All commands" && (
-              <button onClick={() => setCategory("All commands")}>Clear category ×</button>
-            )}
-          </div>
-        </div>
-
-        <div className="active-filters" aria-label="Category filters">
-          {["All commands", ...categories].map((item) => (
+          <nav className="category-nav">
             <button
-              key={item}
-              className={category === item ? "selected" : ""}
-              onClick={() => setCategory(item)}
+              className={category === "All commands" ? "active" : ""}
+              onClick={() => setCategory("All commands")}
             >
-              {item}
+              <span className="nav-glyph">⌘</span>
+              <span>All commands</span>
+              <b>{commands.length}</b>
             </button>
-          ))}
-        </div>
+            {categories.map((item) => (
+              <button
+                className={category === item ? "active" : ""}
+                key={item}
+                onClick={() => setCategory(item)}
+              >
+                <span className="nav-glyph">{categoryGlyphs[item] ?? "›"}</span>
+                <span>{item}</span>
+                <b>{commands.filter((command) => command.category === item).length}</b>
+              </button>
+            ))}
+          </nav>
 
-        {filtered.length ? (
-          <div className="command-list">
-            {filtered.map((item) => (
-              <article className="command-card" key={`${item.category}-${item.command}`}>
-                <div className="command-meta">
-                  <span>{item.category}</span>
-                  {item.importance === "high" && <mark>Recommended</mark>}
-                  {item.sudo && <mark className="sudo">sudo</mark>}
-                </div>
-                <h3>{item.purpose}</h3>
-                <div className="code-row">
-                  <code>{item.command}</code>
-                  <button onClick={() => copy(item.command)} aria-label={`Copy ${item.command}`}>
-                    <span aria-hidden="true">{copied === item.command ? "✓" : "□"}</span>
-                    {copied === item.command ? "Copied" : "Copy"}
-                  </button>
-                </div>
-                {item.warning && <div className="warning"><span>!</span>{item.warning}</div>}
-              </article>
+          <button className="workflow-trigger" onClick={() => setShowWorkflow(!showWorkflow)}>
+            <span><b>Quick diagnostics</b><small>Two guided checklists</small></span>
+            <i>{showWorkflow ? "−" : "+"}</i>
+          </button>
+        </aside>
+
+        <section className="workspace" id="commands" aria-labelledby="results-title">
+          <div className="results-bar">
+            <div>
+              <p className="context-label">
+                {query ? "SEARCH RESULTS" : category === "All commands" ? "COMMAND LIBRARY" : "CATEGORY"}
+              </p>
+              <h1 id="results-title">
+                {query ? <>Results for <em>“{query}”</em></> : category}
+              </h1>
+            </div>
+            <div className="results-actions">
+              <span>{filtered.length} of {commands.length}</span>
+              {(query || category !== "All commands") && <button onClick={reset}>Reset</button>}
+              <button className={showWorkflow ? "active" : ""} onClick={() => setShowWorkflow(!showWorkflow)}>
+                {showWorkflow ? "Hide checks" : "Quick checks"}
+              </button>
+            </div>
+          </div>
+
+          <div className="mobile-filters" aria-label="Category filters">
+            {["All commands", ...categories].map((item) => (
+              <button
+                key={item}
+                className={category === item ? "active" : ""}
+                onClick={() => setCategory(item)}
+              >
+                {item}
+              </button>
             ))}
           </div>
-        ) : (
-          <div className="empty-state">
-            <span>⌕</span>
-            <h3>No command found</h3>
-            <p>Try a shorter phrase or search by what you want to diagnose.</p>
-            <button onClick={() => { setQuery(""); setCategory("All commands"); }}>Reset search</button>
-          </div>
-        )}
-      </section>
 
-      <section className="about" id="about">
-        <div>
-          <span className="mini-label">BUILT FOR RECALL</span>
-          <h2>Your second brain,<br />one command at a time.</h2>
-        </div>
-        <div>
-          <p>This is not another exhaustive manual. It is a practical, searchable shelf for the commands worth remembering—the ones you have already needed in real work.</p>
-          <p className="roadmap">Next shelves: Linux · Kubernetes · PostgreSQL · MySQL · Git · Docker · Ansible · OpenSSL</p>
-        </div>
-        <div className="cpu-workflow">
-          <strong>High-CPU path</strong>
-          {highCpuWorkflow.map((item, index) => <code key={item}>{index + 1}. {item}</code>)}
-        </div>
-      </section>
+          {showWorkflow && (
+            <div className="workflow-panel">
+              <WorkflowList title="Mac feels slow" commands={quickChecks} copied={copied} onCopy={copy} />
+              <WorkflowList title="High CPU process" commands={highCpuWorkflow} copied={copied} onCopy={copy} />
+            </div>
+          )}
+
+          {filtered.length ? (
+            <div className="command-list">
+              {filtered.map((item) => (
+                <article className="command-card" key={`${item.category}-${item.command}`}>
+                  <div className="command-meta">
+                    <span>{item.category}</span>
+                    {item.importance === "high" && <mark>Recommended</mark>}
+                    {item.sudo && <mark className="sudo">sudo</mark>}
+                  </div>
+                  <h2>{item.purpose}</h2>
+                  <div className="code-row">
+                    <code>{item.command}</code>
+                    <button onClick={() => copy(item.command)} aria-label={`Copy ${item.command}`}>
+                      <span aria-hidden="true">{copied === item.command ? "✓" : "□"}</span>
+                      {copied === item.command ? "Copied" : "Copy"}
+                    </button>
+                  </div>
+                  {item.warning && <div className="warning"><span>!</span>{item.warning}</div>}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <span>⌕</span>
+              <h2>No commands match “{query}”</h2>
+              <p>Try fewer words, search by the problem, or clear the category filter.</p>
+              <button onClick={reset}>Show all commands</button>
+            </div>
+          )}
+        </section>
+      </div>
 
       <footer>
-        <a className="brand" href="#top"><span className="prompt-mark">$_</span> command<span className="brand-accent">kit</span></a>
-        <p>Made for engineers who would rather fix the system than search for the command.</p>
-        <a href="#top">Back to top ↑</a>
+        <span><b>commandkit</b> · Engineering commands worth remembering</span>
+        <a href="#commands">Back to top ↑</a>
       </footer>
     </main>
+  );
+}
+
+function WorkflowList({
+  title,
+  commands,
+  copied,
+  onCopy,
+}: {
+  title: string;
+  commands: string[];
+  copied: string | null;
+  onCopy: (value: string) => void;
+}) {
+  return (
+    <div className="workflow-list">
+      <h2>{title}</h2>
+      <ol>
+        {commands.map((item, index) => (
+          <li key={item}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <code>{item}</code>
+            <button onClick={() => onCopy(item)}>{copied === item ? "✓" : "Copy"}</button>
+          </li>
+        ))}
+      </ol>
+    </div>
   );
 }
