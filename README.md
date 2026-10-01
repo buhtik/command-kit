@@ -13,7 +13,7 @@ The library combines macOS performance and troubleshooting commands with popular
 
 ## Content
 
-The command library lives in the root JSON files: `macos_performance_troubleshooting_commands.json`, `postgres_commands.json`, `kubernetes_commands.json`, and `git_commands.json`. Content stays separate from the interface so the same data can later power a CLI, fzf picker, Raycast extension, or generated documentation.
+The command library lives in the root JSON files: `macos_performance_troubleshooting_commands.json`, `postgres_commands.json`, `kubernetes_commands.json`, `git_commands.json`, `jq_commands.json`, `yq_commands.json`, and `vim_commands.json`. Content stays separate from the interface so the same data can later power a CLI, fzf picker, Raycast extension, or generated documentation.
 
 Planned collections include Linux, MySQL, Docker, Ansible, networking, and OpenSSL.
 

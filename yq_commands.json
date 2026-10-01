@@ -1,0 +1,57 @@
+{
+  "title": "yq",
+  "description": "YAML querying, editing & conversion",
+  "glyph": "YQ",
+  "categories": [
+    {
+      "name": "Read and Inspect",
+      "commands": [
+        { "command": "yq '.' FILE.yaml", "purpose": "Pretty-print and validate a YAML file", "sudo": false, "importance": "high" },
+        { "command": "yq '.metadata.name' FILE.yaml", "purpose": "Read a nested value", "sudo": false, "importance": "high" },
+        { "command": "yq '.items[].metadata.name' FILE.yaml", "purpose": "Print a field from every item in an array", "sudo": false },
+        { "command": "yq 'keys' FILE.yaml", "purpose": "List the keys of a mapping", "sudo": false },
+        { "command": "yq '.items | length' FILE.yaml", "purpose": "Count the elements in an array", "sudo": false }
+      ]
+    },
+    {
+      "name": "Select and Filter",
+      "commands": [
+        { "command": "yq '.items[] | select(.enabled == true)' FILE.yaml", "purpose": "Select array elements matching a condition", "sudo": false, "importance": "high" },
+        { "command": "yq '.items[] | select(.name == \"NAME\")' FILE.yaml", "purpose": "Find an array element by a field value", "sudo": false },
+        { "command": "yq '.value // \"default\"' FILE.yaml", "purpose": "Use a fallback when a value is null or missing", "sudo": false },
+        { "command": "yq '.. | select(tag == \"!!str\")' FILE.yaml", "purpose": "Recursively print all string values", "sudo": false },
+        { "command": "yq '.. | path | join(\".\")' FILE.yaml", "purpose": "Print the path to every value in a document", "sudo": false }
+      ]
+    },
+    {
+      "name": "Update YAML",
+      "commands": [
+        { "command": "yq -i '.image.tag = \"VERSION\"' FILE.yaml", "purpose": "Update a value in place", "sudo": false, "importance": "high", "warning": "Modifies the file in place; review the diff before committing." },
+        { "command": "yq -i '.enabled = true' FILE.yaml", "purpose": "Set a Boolean field in place", "sudo": false, "warning": "Modifies the file in place; review the diff before committing." },
+        { "command": "yq -i 'del(.metadata.annotations)' FILE.yaml", "purpose": "Delete a field in place", "sudo": false, "warning": "Modifies the file in place; review the diff before committing." },
+        { "command": "yq -i '.items += [{\"name\": \"NEW\"}]' FILE.yaml", "purpose": "Append an object to an array in place", "sudo": false, "warning": "Modifies the file in place; review the diff before committing." },
+        { "command": "VALUE=production yq -i '.environment = strenv(VALUE)' FILE.yaml", "purpose": "Update a field from an environment variable", "sudo": false, "warning": "Modifies the file in place; review the diff before committing." }
+      ]
+    },
+    {
+      "name": "Merge and Multi-file",
+      "commands": [
+        { "command": "yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' BASE.yaml OVERRIDE.yaml", "purpose": "Deep-merge an override file into a base file", "sudo": false, "importance": "high" },
+        { "command": "yq ea '. as $item ireduce ({}; . * $item)' FILES.yaml", "purpose": "Merge all YAML documents or files into one object", "sudo": false },
+        { "command": "yq -n 'load(\"FILE.yaml\")'", "purpose": "Load a YAML file from a null input expression", "sudo": false },
+        { "command": "yq eval-all '. as $doc ireduce ([]; . + [$doc])' FILES.yaml", "purpose": "Collect multiple YAML documents into an array", "sudo": false },
+        { "command": "yq '.items | sort_by(.name)' FILE.yaml", "purpose": "Sort an array of objects by a field", "sudo": false }
+      ]
+    },
+    {
+      "name": "Formats and Documents",
+      "commands": [
+        { "command": "yq -o=json '.' FILE.yaml", "purpose": "Convert YAML to JSON", "sudo": false, "importance": "high" },
+        { "command": "yq -p=json -o=yaml '.' FILE.json", "purpose": "Convert JSON to YAML", "sudo": false },
+        { "command": "yq -o=props '.' FILE.yaml", "purpose": "Convert YAML to Java properties format", "sudo": false },
+        { "command": "yq eval-all 'select(documentIndex == 1)' FILE.yaml", "purpose": "Read the second document from a multi-document YAML file", "sudo": false },
+        { "command": "yq -N '.' FILE.yaml", "purpose": "Print YAML without document separators", "sudo": false }
+      ]
+    }
+  ]
+}

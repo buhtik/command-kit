@@ -43,6 +43,19 @@
       ]
     },
     {
+      "name": "Troubleshooting Queries",
+      "commands": [
+        { "command": "kubectl get pods -A --field-selector spec.nodeName=\"$(kubectl get pod POD -n NAMESPACE -o jsonpath='{.spec.nodeName}')\" -o wide", "purpose": "Find all pods scheduled on the same node as a specific pod", "sudo": false, "importance": "high" },
+        { "command": "kubectl describe node NODE", "purpose": "Inspect node conditions, capacity, allocations, and recent events", "sudo": false, "importance": "high" },
+        { "command": "kubectl get events -n NAMESPACE --field-selector involvedObject.kind=Pod,involvedObject.name=POD --sort-by=.lastTimestamp", "purpose": "Show events for one pod in chronological order", "sudo": false },
+        { "command": "kubectl get pods -n NAMESPACE -o yaml | yq '.items[].metadata.name'", "purpose": "Parse YAML output and print every pod name with yq", "sudo": false },
+        { "command": "kubectl get deployment NAME -n NAMESPACE -o yaml | yq '.spec.template.spec.containers[] | [.name, .image] | @tsv'", "purpose": "List deployment container names and images as tab-separated rows", "sudo": false },
+        { "command": "kubectl get pods -A -o yaml | yq '.items[] | select(.status.phase != \"Running\" and .status.phase != \"Succeeded\") | [.metadata.namespace, .metadata.name, .status.phase] | @tsv'", "purpose": "Find non-running pods across all namespaces by filtering YAML with yq", "sudo": false, "importance": "high" },
+        { "command": "kubectl get pod POD -n NAMESPACE -o yaml | yq '.status.containerStatuses[] | {name: .name, ready: .ready, restarts: .restartCount, state: .state}'", "purpose": "Summarize each container's readiness, restart count, and current state", "sudo": false },
+        { "command": "kubectl get pod POD -n NAMESPACE -o yaml | yq '.spec | {nodeSelector: .nodeSelector, affinity: .affinity, tolerations: .tolerations}'", "purpose": "Inspect the scheduling constraints that affect pod placement", "sudo": false }
+      ]
+    },
+    {
       "name": "Apply and Rollouts",
       "commands": [
         { "command": "kubectl diff -f MANIFEST.yaml", "purpose": "Preview changes a manifest would make", "sudo": false, "importance": "high" },

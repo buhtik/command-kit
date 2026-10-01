@@ -1,7 +1,10 @@
 import gitData from "../git_commands.json";
+import jqData from "../jq_commands.json";
 import kubernetesData from "../kubernetes_commands.json";
 import macosData from "../macos_performance_troubleshooting_commands.json";
 import postgresData from "../postgres_commands.json";
+import vimData from "../vim_commands.json";
+import yqData from "../yq_commands.json";
 
 export type Command = {
   command: string;
@@ -61,4 +64,7 @@ export const commandCollections = [
   normalize(postgresData),
   normalize(kubernetesData),
   normalize(gitData),
+  normalize(jqData),
+  normalize(yqData),
+  normalize(vimData),
 ];
