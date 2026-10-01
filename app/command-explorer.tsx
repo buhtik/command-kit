@@ -54,6 +54,21 @@ const categoryGlyphs: Record<string, string> = {
   "Stash and Worktrees": "▤",
   "Undo and Recover": "↶",
   "Tags and Releases": "◆",
+  "Input and Output": "⇥",
+  "Select and Navigate": "⌕",
+  "Objects and Arrays": "▦",
+  "Transform and Build": "◇",
+  "Variables and Text": "ƒ",
+  "Read and Inspect": "⌕",
+  "Select and Filter": "≡",
+  "Update YAML": "↻",
+  "Merge and Multi-file": "⇄",
+  "Formats and Documents": "◆",
+  "Open and Navigate": "↪",
+  "Edit and Repeat": "✎",
+  "Search and Replace": "⌕",
+  "Files and Windows": "▤",
+  "Visual, Registers and Macros": "●",
 };
 
 export function CommandExplorer({ collections }: Props) {

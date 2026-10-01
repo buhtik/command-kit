@@ -1,0 +1,56 @@
+{
+  "title": "jq",
+  "description": "JSON filtering, transformation & formatting",
+  "glyph": "JQ",
+  "categories": [
+    {
+      "name": "Input and Output",
+      "commands": [
+        { "command": "jq '.' FILE.json", "purpose": "Pretty-print and validate a JSON file", "sudo": false, "importance": "high" },
+        { "command": "COMMAND | jq '.'", "purpose": "Pretty-print JSON produced by another command", "sudo": false, "importance": "high" },
+        { "command": "jq -r '.field' FILE.json", "purpose": "Print a string value without JSON quotes", "sudo": false },
+        { "command": "jq -c '.' FILE.json", "purpose": "Emit compact JSON with one value per line", "sudo": false },
+        { "command": "jq -s '.' FILE.jsonl", "purpose": "Collect a stream of JSON values into one array", "sudo": false }
+      ]
+    },
+    {
+      "name": "Select and Navigate",
+      "commands": [
+        { "command": "jq '.user.name' FILE.json", "purpose": "Read a nested object field", "sudo": false, "importance": "high" },
+        { "command": "jq '.items[]' FILE.json", "purpose": "Emit every element from an array", "sudo": false },
+        { "command": "jq '.items[] | select(.active == true)' FILE.json", "purpose": "Select array elements matching a condition", "sudo": false, "importance": "high" },
+        { "command": "jq '.items[]? | .name // \"unknown\"' FILE.json", "purpose": "Read optional values and provide a fallback", "sudo": false },
+        { "command": "jq 'paths(scalars) as $p | {path: $p, value: getpath($p)}' FILE.json", "purpose": "List paths and values for every scalar leaf", "sudo": false }
+      ]
+    },
+    {
+      "name": "Objects and Arrays",
+      "commands": [
+        { "command": "jq 'keys' FILE.json", "purpose": "List the keys of an object", "sudo": false },
+        { "command": "jq '.items | length' FILE.json", "purpose": "Count the elements in an array", "sudo": false },
+        { "command": "jq '.items | sort_by(.name)' FILE.json", "purpose": "Sort objects in an array by a field", "sudo": false },
+        { "command": "jq '.items | unique_by(.id)' FILE.json", "purpose": "Remove duplicate objects based on a field", "sudo": false },
+        { "command": "jq '.items | group_by(.status) | map({status: .[0].status, count: length})' FILE.json", "purpose": "Group objects by a field and count each group", "sudo": false }
+      ]
+    },
+    {
+      "name": "Transform and Build",
+      "commands": [
+        { "command": "jq '{id: .user.id, name: .user.name}' FILE.json", "purpose": "Build a new object from selected fields", "sudo": false, "importance": "high" },
+        { "command": "jq '.items | map(.name)' FILE.json", "purpose": "Transform an array into an array of field values", "sudo": false },
+        { "command": "jq '.enabled = true' FILE.json", "purpose": "Set or replace a field in the output", "sudo": false },
+        { "command": "jq 'del(.metadata.internal)' FILE.json", "purpose": "Remove a field from the output", "sudo": false },
+        { "command": "jq '.defaults * .overrides' FILE.json", "purpose": "Recursively merge two objects, favoring override values", "sudo": false }
+      ]
+    },
+    {
+      "name": "Variables and Text",
+      "commands": [
+        { "command": "jq --arg name \"VALUE\" '.name = $name' FILE.json", "purpose": "Safely pass a shell string into a jq filter", "sudo": false, "importance": "high" },
+        { "command": "jq --argjson config '{\"enabled\":true}' '.config = $config' FILE.json", "purpose": "Pass a JSON value into a jq filter", "sudo": false },
+        { "command": "jq -r '.items[] | [.id, .name] | @tsv' FILE.json", "purpose": "Render selected values as tab-separated rows", "sudo": false },
+        { "command": "jq -e '.items | length > 0' FILE.json", "purpose": "Return a successful exit status only when a condition is true", "sudo": false }
+      ]
+    }
+  ]
+}

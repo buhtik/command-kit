@@ -1,0 +1,62 @@
+{
+  "title": "Vim",
+  "description": "Editing, navigation & text manipulation",
+  "glyph": "VI",
+  "categories": [
+    {
+      "name": "Open and Navigate",
+      "commands": [
+        { "command": "vim FILE", "purpose": "Open a file in Vim", "sudo": false, "importance": "high" },
+        { "command": ":e FILE", "purpose": "Open another file in the current window", "sudo": false },
+        { "command": "gg / G", "purpose": "Jump to the first or last line", "sudo": false },
+        { "command": "0 / ^ / $", "purpose": "Jump to the line start, first non-blank character, or line end", "sudo": false },
+        { "command": "w / b / e", "purpose": "Move by word start, previous word, or word end", "sudo": false },
+        { "command": "Ctrl-d / Ctrl-u", "purpose": "Move down or up half a screen", "sudo": false }
+      ]
+    },
+    {
+      "name": "Edit and Repeat",
+      "commands": [
+        { "command": "i / a / o", "purpose": "Enter insert mode before, after, or on a new line", "sudo": false, "importance": "high" },
+        { "command": "Esc", "purpose": "Return to Normal mode", "sudo": false, "importance": "high" },
+        { "command": "dd / yy / p", "purpose": "Delete a line, copy a line, or paste", "sudo": false },
+        { "command": "x / rCHAR", "purpose": "Delete or replace the character under the cursor", "sudo": false },
+        { "command": "ciw / diw", "purpose": "Change or delete the word under the cursor", "sudo": false },
+        { "command": "u / Ctrl-r", "purpose": "Undo or redo a change", "sudo": false, "importance": "high" },
+        { "command": ".", "purpose": "Repeat the last change", "sudo": false }
+      ]
+    },
+    {
+      "name": "Search and Replace",
+      "commands": [
+        { "command": "/PATTERN", "purpose": "Search forward for a pattern", "sudo": false, "importance": "high" },
+        { "command": "?PATTERN", "purpose": "Search backward for a pattern", "sudo": false },
+        { "command": "n / N", "purpose": "Jump to the next or previous search match", "sudo": false },
+        { "command": "* / #", "purpose": "Search forward or backward for the word under the cursor", "sudo": false },
+        { "command": ":%s/OLD/NEW/g", "purpose": "Replace every match in the file", "sudo": false, "warning": "Replaces all matches without confirmation; use the c flag to review each change." },
+        { "command": ":%s/OLD/NEW/gc", "purpose": "Replace matches across the file with confirmation", "sudo": false, "importance": "high" }
+      ]
+    },
+    {
+      "name": "Files and Windows",
+      "commands": [
+        { "command": ":w", "purpose": "Save the current file", "sudo": false, "importance": "high" },
+        { "command": ":q / :q!", "purpose": "Quit, or quit and discard unsaved changes", "sudo": false, "warning": ":q! discards unsaved changes in the current buffer." },
+        { "command": ":wq / ZZ", "purpose": "Save the current file and quit", "sudo": false },
+        { "command": ":split FILE / :vsplit FILE", "purpose": "Open a file in a horizontal or vertical split", "sudo": false },
+        { "command": "Ctrl-w h/j/k/l", "purpose": "Move focus between split windows", "sudo": false },
+        { "command": ":ls / :b NUMBER", "purpose": "List buffers or switch to a buffer by number", "sudo": false }
+      ]
+    },
+    {
+      "name": "Visual, Registers and Macros",
+      "commands": [
+        { "command": "v / V / Ctrl-v", "purpose": "Start character, line, or block Visual mode", "sudo": false },
+        { "command": "\"+y / \"+p", "purpose": "Copy to or paste from the system clipboard register", "sudo": false },
+        { "command": ":'<,'>sort", "purpose": "Sort the visually selected lines", "sudo": false },
+        { "command": "qa ... q / @a", "purpose": "Record commands into register a, then replay the macro", "sudo": false },
+        { "command": ":set number relativenumber", "purpose": "Show absolute and relative line numbers", "sudo": false }
+      ]
+    }
+  ]
+}

@@ -8,6 +8,9 @@ const collectionFiles = [
   "postgres_commands.json",
   "kubernetes_commands.json",
   "git_commands.json",
+  "jq_commands.json",
+  "yq_commands.json",
+  "vim_commands.json",
 ];
 
 async function render() {
@@ -43,6 +46,9 @@ test("server-renders the command library and collection switcher", async () => {
   assert.match(html, /PostgreSQL/);
   assert.match(html, /Kubernetes/);
   assert.match(html, />Git</);
+  assert.match(html, />jq</);
+  assert.match(html, />yq</);
+  assert.match(html, />Vim</);
   assert.match(html, /top -o cpu/);
   assert.match(html, /<strong>66<\/strong><span>commands<\/span>/);
 });
@@ -77,5 +83,5 @@ test("all command collections contain categorized, unique commands", async () =>
     totalCommands += commands.length;
   }
 
-  assert.equal(totalCommands, 172);
+  assert.equal(totalCommands, 259);
 });
